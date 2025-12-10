@@ -77,3 +77,32 @@ build/
 *.local
 .secret.*
 licensed/
+
+# Terraform artifacts
+*.tfstate
+*.tfstate.*
+*.tfstate.backup
+.terraform/
+.terraform.lock.hcl
+tfplan
+*.tfplan
+backend.conf
+*.backend.conf
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+crash.log
+crash.*.log
+.terraformrc
+terraform.rc
+.state/
+errored.tfstate
+*.tfvars
+
+# Python build artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+.pytest_cache/

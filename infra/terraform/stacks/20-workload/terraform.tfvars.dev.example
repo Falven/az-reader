@@ -1,0 +1,59 @@
+# Environment-specific tfvars for 20-workload (dev)
+
+subscription_id = "00000000-0000-0000-0000-000000000000"
+tenant_id       = "11111111-1111-1111-1111-111111111111"
+
+environment_code = "dev"
+location         = "eastus"
+cosmos_location  = "" # optional override; defaults to location
+workload_name    = "azreader"
+identifier       = ""
+
+# Container image + registry (defaults for local dev)
+container_image       = "<acr>.azurecr.io/az-reader:latest"
+registry_id           = "" # optional; set to ACR resource ID to grant AcrPull
+registry_login_server = "<acr>.azurecr.io"
+registry_username     = "" # optional if using managed identity
+registry_password     = "" # optional if using managed identity
+
+# App runtime + scaling
+target_port           = 8080
+cpu                   = 0.5
+memory                = "1Gi"
+min_replicas          = 1
+max_replicas          = 3
+ingress_external      = true
+ingress_allowed_cidrs = [] # optional CIDR allowlist; empty means open
+
+# Observability
+log_retention_days         = 30
+log_analytics_workspace_id = ""
+
+# Application settings (non-secret)
+app_settings = {
+  # Helpful dev defaults; copy to terraform.tfvars.dev and adjust.
+  NODE_ENV = "production"
+  NODE_OPTIONS = "--require=/app/build/shared/register-searcher.js"
+}
+
+# Secrets (Key Vault seed values) — populated by deploy-workload; keep out of VCS
+secrets = {
+  # "JINA_API_KEY" = "<value>"
+}
+
+# Map env var -> secret name override (optional)
+secret_environment_overrides = {
+  # "JINA_API_KEY" = "JINA_API_KEY"
+}
+
+# Remote state backend for this stack (populated by deploy_workload.py)
+state_resource_group_name  = ""
+state_storage_account_name = ""
+state_container_name       = "tfstate"
+state_blob_key             = "dev/terraform.tfstate"
+
+tags = {
+  owner       = "platform-team"
+  environment = "dev"
+  workload    = "azreader"
+}

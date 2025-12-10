@@ -1,0 +1,10 @@
+[project]
+name = "ops"
+version = "0.1.0"
+description = "Ops helpers for az-reader Terraform deployment"
+requires-python = ">=3.13"
+dependencies = ["python-hcl2"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

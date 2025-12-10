@@ -27,6 +27,6 @@
     "typescript.preferences.importModuleSpecifier": "project-relative",
     "typescript.locale": "en",
     "cSpell.enabled": true,
-    "cSpell.words": [
-    ],
+    "cSpell.words": [],
+    "python-envs.pythonProjects": [],
 }

@@ -558,13 +558,17 @@ export class PuppeteerControl extends AsyncService {
                 this.browser.process()?.kill('SIGKILL');
             }
         }
+        // ACA and other managed container runtimes block Chromium's setuid/userns sandbox.
+        // Puppeteer’s Docker guidance recommends disabling the sandbox when the host disallows it.
         this.browser = await puppeteer.launch({
             timeout: 10_000,
             headless: !Boolean(process.env.DEBUG_BROWSER),
             executablePath: process.env.OVERRIDE_CHROME_EXECUTABLE_PATH,
             args: [
                 '--disable-dev-shm-usage',
-                '--disable-blink-features=AutomationControlled'
+                '--disable-blink-features=AutomationControlled',
+                '--no-sandbox',
+                '--disable-setuid-sandbox',
             ]
         }).catch((err: any) => {
             this.logger.error(`Unknown firebase issue, just die fast.`, { err });

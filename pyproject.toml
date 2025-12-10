@@ -1,0 +1,22 @@
+[project]
+name = "az-reader"
+version = "0.0.0"
+requires-python = ">=3.13"
+
+[project.scripts]
+deploy-bootstrap = "ops.deploy_bootstrap:main"
+deploy-workload = "ops.deploy_workload:main"
+build-reader-image = "ops.build_and_push_reader:main"
+
+[tool.uv.workspace]
+members = ["ops"]
+
+[tool.uv]
+package = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["gateway_ops/gateway_ops"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
