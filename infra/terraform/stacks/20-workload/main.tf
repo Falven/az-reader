@@ -82,20 +82,27 @@ locals {
     { COSMOS_KEY = "cosmos-key" }
   )
 
-  search_target_port = 8082
+  search_target_port  = 8082
+  shared_node_require = "--require=/app/build/shared/enforce-auth.js"
 
   crawl_app_settings = merge(
     local.base_app_settings,
     {
-      PORT = tostring(var.target_port)
+      PORT         = tostring(var.target_port)
+      NODE_OPTIONS = local.shared_node_require
     }
   )
+
+  search_node_options = trimspace(join(" ", compact([
+    local.shared_node_require,
+    lookup(var.app_settings, "NODE_OPTIONS", ""),
+  ])))
 
   search_app_settings = merge(
     local.base_app_settings,
     {
       PORT         = tostring(local.search_target_port)
-      NODE_OPTIONS = lookup(var.app_settings, "NODE_OPTIONS", "")
+      NODE_OPTIONS = local.search_node_options
     }
   )
 

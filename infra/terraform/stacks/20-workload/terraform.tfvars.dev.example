@@ -32,18 +32,24 @@ log_analytics_workspace_id = ""
 # Application settings (non-secret)
 app_settings = {
   # Helpful dev defaults; copy to terraform.tfvars.dev and adjust.
-  NODE_ENV = "production"
-  NODE_OPTIONS = "--require=/app/build/shared/register-searcher.js"
+  NODE_ENV                          = "production"
+  NODE_OPTIONS                      = "--require=/app/build/shared/register-searcher.js"
+  AZURE_OPENAI_ENDPOINT             = "https://your-openai-endpoint.openai.azure.com/"
+  AZURE_OPENAI_DEPLOYMENT           = "gpt-5-mini"
+  AZURE_OPENAI_API_VERSION          = "2024-12-01-preview"
+  AZURE_OPENAI_EMBEDDING_DEPLOYMENT = "text-embedding-3-small"
+  BLOB_ENABLED                      = "false"
+  COSMOS_AUTH_MODE                  = "aad"
+  PORT                              = "8080"
+  SELF_HOST_API_KEYS                = "" # comma-separated list of shared tokens for self-host auth (optional)
 }
 
 # Secrets (Key Vault seed values) — populated by deploy-workload; keep out of VCS
 secrets = {
-  # "JINA_API_KEY" = "<value>"
-}
-
-# Map env var -> secret name override (optional)
-secret_environment_overrides = {
-  # "JINA_API_KEY" = "JINA_API_KEY"
+  AZURE_OPENAI_API_KEY  = "<value>"
+  BRAVE_SEARCH_API_KEY  = "<value>"
+  JINA_SERP_API_KEY     = "<value>"
+  SERPER_SEARCH_API_KEY = "<value>"
 }
 
 # Remote state backend for this stack (populated by deploy_workload.py)
