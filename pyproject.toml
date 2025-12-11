@@ -15,7 +15,7 @@ members = ["ops"]
 package = true
 
 [tool.hatch.build.targets.wheel]
-packages = ["gateway_ops/gateway_ops"]
+packages = ["ops/ops"]
 
 [build-system]
 requires = ["hatchling"]
