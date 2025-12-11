@@ -14,6 +14,7 @@ from ._deploy_common import (
     resolve_paths,
     terraform_apply,
     terraform_init_remote,
+    terraform_output,
     terraform_plan,
     update_tfvars,
 )
@@ -76,6 +77,32 @@ def deploy_workload(
     )
     terraform_plan(paths.workload, tfvars, extra)
     terraform_apply(paths.workload, tfvars, True, extra)
+    _log_app_endpoints(paths.workload)
+
+
+def _log_app_endpoints(workload_path: Path) -> None:
+    outputs = terraform_output(workload_path)
+
+    def _val(key: str) -> str | None:
+        node = outputs.get(key, {})
+        if isinstance(node, dict):
+            value = node.get("value")
+            return str(value) if value is not None else None
+        return None
+
+    crawl_fqdn = _val("crawl_container_app_fqdn")
+    search_fqdn = _val("search_container_app_fqdn")
+
+    def _normalize(url: str | None) -> str | None:
+        if url is None:
+            return None
+        return url if url.startswith("http") else f"https://{url}"
+
+    logging.info("==> Deployment outputs")
+    if crawl_fqdn:
+        logging.info("Crawl app:  %s", f"{_normalize(crawl_fqdn)}/")
+    if search_fqdn:
+        logging.info("Search app: %s", f"{_normalize(search_fqdn)}/search")
 
 
 def main(argv: list[str] | None = None) -> int:

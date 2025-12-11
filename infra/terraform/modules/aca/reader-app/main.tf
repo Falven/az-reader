@@ -159,11 +159,13 @@ module "app" {
     max_replicas = var.max_replicas
     containers = [
       {
-        name   = "az-reader"
-        image  = var.container_image
-        cpu    = var.cpu
-        memory = var.memory
-        env    = local.container_env
+        name    = "az-reader"
+        image   = var.container_image
+        cpu     = var.cpu
+        memory  = var.memory
+        env     = local.container_env
+        command = var.command
+        args    = var.args
       }
     ]
   }

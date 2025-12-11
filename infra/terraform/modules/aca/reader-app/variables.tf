@@ -70,6 +70,18 @@ variable "target_port" {
   default     = 8080
 }
 
+variable "command" {
+  description = "Optional container command override"
+  type        = list(string)
+  default     = null
+}
+
+variable "args" {
+  description = "Optional container args override"
+  type        = list(string)
+  default     = null
+}
+
 variable "cpu" {
   description = "vCPU for container"
   type        = number

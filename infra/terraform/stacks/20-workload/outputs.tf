@@ -3,14 +3,24 @@ output "resource_group_name" {
   description = "Workload resource group name"
 }
 
-output "container_app_name" {
-  value       = module.reader_app.app_name
-  description = "Container App name"
+output "crawl_container_app_name" {
+  value       = module.reader_app_crawl.app_name
+  description = "Crawl Container App name"
 }
 
-output "container_app_fqdn" {
-  value       = module.reader_app.app_fqdn
-  description = "Container App FQDN"
+output "crawl_container_app_fqdn" {
+  value       = module.reader_app_crawl.app_fqdn
+  description = "Crawl Container App FQDN"
+}
+
+output "search_container_app_name" {
+  value       = module.reader_app_search.app_name
+  description = "Search Container App name"
+}
+
+output "search_container_app_fqdn" {
+  value       = module.reader_app_search.app_fqdn
+  description = "Search Container App FQDN"
 }
 
 output "aca_environment_id" {
@@ -18,7 +28,12 @@ output "aca_environment_id" {
   description = "ACA environment ID"
 }
 
-output "identity_principal_id" {
-  value       = module.reader_app.identity_principal_id
-  description = "User-assigned identity principal ID"
+output "crawl_identity_principal_id" {
+  value       = module.reader_app_crawl.identity_principal_id
+  description = "Crawl user-assigned identity principal ID"
+}
+
+output "search_identity_principal_id" {
+  value       = module.reader_app_search.identity_principal_id
+  description = "Search user-assigned identity principal ID"
 }

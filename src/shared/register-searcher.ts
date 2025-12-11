@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 /**
- * Preload the search RPC host so the crawl server also registers search routes.
- * This stays out of the main entrypoint to avoid modifying upstream application code.
+ * Preload the search RPC host when this module is pulled in via NODE_OPTIONS.
+ * This keeps route registration decoupled from the entrypoints.
  */
 import { container } from 'tsyringe';
 import { SearcherHost } from '../api/searcher';
