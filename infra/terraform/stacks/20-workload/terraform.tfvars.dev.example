@@ -16,6 +16,16 @@ registry_login_server = "<acr>.azurecr.io"
 registry_username     = "" # optional if using managed identity
 registry_password     = "" # optional if using managed identity
 
+# Key Vault
+key_vault_name                       = "kv-apisix-prod-eus-kv-ww"
+key_vault_resource_group             = "rg-apisix-prod-eus-platform"
+create_key_vault                     = false
+key_vault_sku                        = "standard"
+key_vault_soft_delete_retention_days = 7
+key_vault_purge_protection_enabled   = true
+key_vault_ip_rules                   = ["108.41.164.49/32"]
+self_host_tokens_secret_name         = "self-host-tokens"
+
 # App runtime + scaling
 target_port           = 8080
 cpu                   = 0.5
@@ -41,15 +51,24 @@ app_settings = {
   BLOB_ENABLED                      = "false"
   COSMOS_AUTH_MODE                  = "aad"
   PORT                              = "8080"
-  SELF_HOST_API_KEYS                = "" # comma-separated list of shared tokens for self-host auth (optional)
+  SELF_HOST_TOKENS_SECRET_NAME      = "self-host-tokens"
+  SELF_HOST_TOKENS_VAULT_URL        = "https://kv-apisix-prod-eus-kv-ww.vault.azure.net"
 }
 
 # Secrets (Key Vault seed values) — populated by deploy-workload; keep out of VCS
 secrets = {
-  AZURE_OPENAI_API_KEY  = "<value>"
-  BRAVE_SEARCH_API_KEY  = "<value>"
-  JINA_SERP_API_KEY     = "<value>"
-  SERPER_SEARCH_API_KEY = "<value>"
+  azure-openai-api-key  = "<value>"
+  brave-search-api-key  = "<value>"
+  jina-serp-api-key     = "<value>"
+  serper-search-api-key = "<value>"
+}
+
+# Map env var -> secret name override (optional)
+secret_environment_overrides = {
+  AZURE_OPENAI_API_KEY  = "azure-openai-api-key"
+  BRAVE_SEARCH_API_KEY  = "brave-search-api-key"
+  JINA_SERP_API_KEY     = "jina-serp-api-key"
+  SERPER_SEARCH_API_KEY = "serper-search-api-key"
 }
 
 # Remote state backend for this stack (populated by deploy_workload.py)

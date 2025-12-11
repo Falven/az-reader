@@ -83,6 +83,48 @@ variable "registry_password" {
   sensitive   = true
 }
 
+variable "key_vault_name" {
+  description = "Key Vault name (required if not creating)"
+  type        = string
+  default     = ""
+}
+
+variable "key_vault_resource_group" {
+  description = "Key Vault resource group (required if not creating)"
+  type        = string
+  default     = ""
+}
+
+variable "create_key_vault" {
+  description = "Create a Key Vault in the workload resource group"
+  type        = bool
+  default     = false
+}
+
+variable "key_vault_sku" {
+  description = "Key Vault SKU (standard or premium)"
+  type        = string
+  default     = "standard"
+}
+
+variable "key_vault_soft_delete_retention_days" {
+  description = "Key Vault soft delete retention days"
+  type        = number
+  default     = 7
+}
+
+variable "key_vault_purge_protection_enabled" {
+  description = "Enable purge protection for Key Vault"
+  type        = bool
+  default     = true
+}
+
+variable "key_vault_ip_rules" {
+  description = "List of IP CIDRs to allow for Key Vault access when using an existing vault (RBAC mode)."
+  type        = list(string)
+  default     = []
+}
+
 variable "target_port" {
   description = "Container port"
   type        = number
@@ -142,6 +184,12 @@ variable "secret_environment_overrides" {
   description = "Env var -> secret name"
   type        = map(string)
   default     = {}
+}
+
+variable "self_host_tokens_secret_name" {
+  description = "Key Vault secret name storing self-host API tokens"
+  type        = string
+  default     = "self-host-tokens"
 }
 
 # Backend (bootstrap state) inputs
