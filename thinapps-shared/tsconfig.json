@@ -1,0 +1,12 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "allowJs": false,
+    "declaration": true,
+    "declarationMap": false,
+    "sourceMap": true,
+    "rootDir": "src",
+    "outDir": "backend"
+  },
+  "include": ["src"]
+}

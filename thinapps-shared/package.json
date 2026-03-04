@@ -1,0 +1,32 @@
+{
+  "name": "@datacontrol/az-thinapps-shared",
+  "private": true,
+  "type": "commonjs",
+  "main": "backend/index.js",
+  "types": "backend/index.d.ts",
+  "exports": {
+    ".": "./backend/index.js",
+    "./*": "./backend/*"
+  },
+  "dependencies": {
+    "@azure/cosmos": "^4.0.0",
+    "@azure/identity": "^4.0.0",
+    "@azure/storage-blob": "^12.0.0",
+    "brave-search": "^0.9.0",
+    "civkit": "^0.9.0-2570394",
+    "firebase-admin": "^12.1.0",
+    "openai": "^4.20.0",
+    "reflect-metadata": "^0.2.2",
+    "serper": "^1.0.6",
+    "tiktoken": "^1.0.16",
+    "tsyringe": "^4.10.0",
+    "zod": "^3.25.76"
+  },
+  "scripts": {
+    "build": "pnpm --dir .. exec tsc -p ./thinapps-shared",
+    "build:clean": "rm -rf ./backend"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.4"
+  }
+}

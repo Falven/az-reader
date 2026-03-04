@@ -112,7 +112,7 @@ export class SerpHost extends RPCHost {
                 .then(() => {
                     this.logger.debug(`Saved ${thisBatch.length} caches by batch`);
                 })
-                .catch((err) => {
+                .catch((err: unknown) => {
                     this.logger.warn(`Failed to cache search result in batch`, { err });
                 });
         }, 1000 * 10 + Math.round(1000 * Math.random())).unref();
@@ -283,8 +283,10 @@ export class SerpHost extends RPCHost {
         let chargeAmount = 0;
         rpcReflect.finally(async () => {
             if (chargeAmount) {
-                auth.reportUsage(chargeAmount, `reader-search`).catch((err) => {
-                    this.logger.warn(`Unable to report usage for ${uid}`, { err: marshalErrorLike(err) });
+                auth.reportUsage(chargeAmount, `reader-search`).catch((err: unknown) => {
+                    this.logger.warn(`Unable to report usage for ${uid}`, {
+                        err: marshalErrorLike(err as Error | string | Record<string, any> | null | undefined)
+                    });
                 });
                 try {
                     const apiRoll = await apiRollPromise;
@@ -295,9 +297,11 @@ export class SerpHost extends RPCHost {
                         tags: [rpcReflect.name.toUpperCase()],
                         status: API_CALL_STATUS.SUCCESS,
                         chargeAmount,
-                    }).save().catch((err) => {
-                        this.logger.warn(`Failed to save rate limit record`, { err: marshalErrorLike(err) });
+                }).save().catch((err: unknown) => {
+                    this.logger.warn(`Failed to save rate limit record`, {
+                        err: marshalErrorLike(err as Error | string | Record<string, any> | null | undefined)
                     });
+                });
                 }
             }
         });

@@ -6,10 +6,10 @@ import {
     RPCHost, RPCReflection,
 } from 'civkit';
 import { singleton } from 'tsyringe';
-import { CloudHTTPv2, CloudTaskV2, Ctx, FirebaseStorageBucketControl, Logger, Param, RPCReflect } from '../shared';
+import { CloudHTTPv2, CloudTaskV2, Ctx, FirebaseStorageBucketControl, Param, RPCReflect } from '../shared';
 import _ from 'lodash';
 import { Request, Response } from 'express';
-import { JinaEmbeddingsAuthDTO } from '../shared/dto/jina-embeddings-auth';
+import { JinaEmbeddingsAuthDTO } from '../dto/jina-embeddings-auth';
 import robotsParser from 'robots-parser';
 import { DOMParser } from '@xmldom/xmldom';
 
@@ -20,6 +20,7 @@ import { AdaptiveCrawlTask, AdaptiveCrawlTaskStatus } from '../db/adaptive-crawl
 import { getFunctions } from 'firebase-admin/functions';
 import { getFunctionUrl } from '../utils/get-function-url';
 import { Timestamp } from 'firebase-admin/firestore';
+import { GlobalLogger } from '../services/logger';
 
 const md5Hasher = new HashManager('md5', 'hex');
 const removeURLHash = (url: string) => {
@@ -41,7 +42,7 @@ export class AdaptiveCrawlerHost extends RPCHost {
     static readonly __singleCrawlQueueName = 'singleCrawlQueue';
 
     constructor(
-        protected globalLogger: Logger,
+        protected globalLogger: GlobalLogger,
         protected firebaseObjectStorage: FirebaseStorageBucketControl,
     ) {
         super(...arguments);

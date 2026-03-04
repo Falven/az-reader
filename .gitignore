@@ -73,6 +73,7 @@ build/
 .firebase-emu/
 *.log
 .DS_Store
+thinapps-shared/backend/
 
 *.local
 .secret.*

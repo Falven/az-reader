@@ -6,7 +6,7 @@ import { AsyncLocalContext } from './async-context';
 import { SerperBingHTTP, SerperGoogleHTTP, SerperImageSearchResponse, SerperNewsSearchResponse, SerperSearchQueryParams, SerperWebSearchResponse } from '../shared/3rd-party/serper-search';
 import { BlackHoleDetector } from './blackhole-detector';
 import { Context } from './registry';
-import { ServiceBadAttemptError } from '../shared';
+import { ServiceBadAttemptError } from './errors';
 
 @singleton()
 export class SerperSearchService extends AsyncService {
@@ -46,7 +46,7 @@ export class SerperSearchService extends AsyncService {
     doSearch(variant: 'web', query: SerperSearchQueryParams): Promise<SerperWebSearchResponse>;
     doSearch(variant: 'images', query: SerperSearchQueryParams): Promise<SerperImageSearchResponse>;
     doSearch(variant: 'news', query: SerperSearchQueryParams): Promise<SerperNewsSearchResponse>;
-    async doSearch(variant: 'web' | 'images' | 'news', query: SerperSearchQueryParams) {
+    async doSearch(variant: 'web' | 'images' | 'news', query: SerperSearchQueryParams): Promise<any> {
         const clientIt = this.iterClient();
         let client = clientIt.next().value;
         if (!client) {

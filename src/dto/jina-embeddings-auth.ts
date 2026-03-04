@@ -22,7 +22,12 @@ import { TierFeatureConstraintError } from '../services/errors';
 const authDtoLogger = logger.child({ service: 'JinaAuthDTO' });
 
 
-const THE_VERY_SAME_JINA_EMBEDDINGS_CLIENT = new JinaEmbeddingsDashboardHTTP(envConfig.JINA_EMBEDDINGS_DASHBOARD_API_KEY);
+const THE_VERY_SAME_JINA_EMBEDDINGS_CLIENT = new JinaEmbeddingsDashboardHTTP(
+    envConfig.JINA_EMBEDDINGS_DASHBOARD_API_KEY || undefined,
+    envConfig.JINA_EMBEDDINGS_DASHBOARD_BASE_URL || undefined,
+    envConfig.JINA_EMBEDDINGS_DASHBOARD_AUDIENCE || undefined,
+    envConfig.JINA_EMBEDDINGS_DASHBOARD_MI_CLIENT_ID || undefined
+);
 
 @Also({
     openapi: {

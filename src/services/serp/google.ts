@@ -211,10 +211,9 @@ async function getWebSearchResults() {
         const cite = primaryLink.querySelector('cite[role=text]')?.textContent;
         let date = cite?.split('·')[1]?.trim();
         const snippets = Array.from(x.querySelectorAll('div[data-sncf*="1"] span'));
-        let snippet = snippets[snippets.length - 1]?.textContent;
-        if (!snippet) {
-            snippet = x.querySelector('div.IsZvec')?.textContent?.trim() || null;
-        }
+        const snippet = snippets[snippets.length - 1]?.textContent
+            || x.querySelector('div.IsZvec')?.textContent?.trim()
+            || undefined;
         date ??= snippets[snippets.length - 2]?.textContent?.trim();
         const imageUrl = x.querySelector('div[data-sncf*="1"] img[src]:not(img[src^="data"])')?.getAttribute('src');
         let siteLinks = Array.from(x.querySelectorAll('div[data-sncf*="3"] a[href]')).map((l) => {

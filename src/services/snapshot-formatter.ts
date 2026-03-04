@@ -5,7 +5,7 @@ import TurndownService, { Filter, Rule } from 'turndown';
 import { GlobalLogger } from './logger';
 import { PageSnapshot } from './puppeteer';
 import { FirebaseStorageBucketControl } from '../shared/services/firebase-storage-bucket';
-import { AsyncContext } from '../shared/services/async-context';
+import { AsyncLocalContext } from './async-context';
 import { Threaded } from '../services/threaded';
 import { JSDomControl } from './jsdom';
 import { AltTextService } from './alt-text';
@@ -85,7 +85,7 @@ export class SnapshotFormatter extends AsyncService {
         protected jsdomControl: JSDomControl,
         protected altTextService: AltTextService,
         protected pdfExtractor: PDFExtractor,
-        protected threadLocal: AsyncContext,
+        protected threadLocal: AsyncLocalContext,
         protected firebaseObjectStorage: FirebaseStorageBucketControl,
     ) {
         super(...arguments);

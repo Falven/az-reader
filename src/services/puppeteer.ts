@@ -558,13 +558,15 @@ export class PuppeteerControl extends AsyncService {
                 this.browser.process()?.kill('SIGKILL');
             }
         }
+        const extraLaunchArgs = (process.env.PUPPETEER_EXTRA_ARGS ?? '').split(/\s+/).filter(Boolean);
         this.browser = await puppeteer.launch({
             timeout: 10_000,
             headless: !Boolean(process.env.DEBUG_BROWSER),
             executablePath: process.env.OVERRIDE_CHROME_EXECUTABLE_PATH,
             args: [
                 '--disable-dev-shm-usage',
-                '--disable-blink-features=AutomationControlled'
+                '--disable-blink-features=AutomationControlled',
+                ...extraLaunchArgs,
             ]
         }).catch((err: any) => {
             this.logger.error(`Unknown firebase issue, just die fast.`, { err });

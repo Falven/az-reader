@@ -6,7 +6,7 @@ import {
 import { singleton } from 'tsyringe';
 import {
     // CloudScheduleV2, CloudTaskV2,
-    FirebaseStorageBucketControl, Logger, Param, TempFileManager
+    FirebaseStorageBucketControl, Param
 } from '../shared';
 import _ from 'lodash';
 import { CrawlerHost } from '../api/crawler';
@@ -19,6 +19,8 @@ import { createGzip } from 'zlib';
 import { getFunctions } from 'firebase-admin/functions';
 import { SnapshotFormatter } from '../services/snapshot-formatter';
 import { getFunctionUrl } from '../utils/get-function-url';
+import { GlobalLogger } from '../services/logger';
+import { TempFileManager } from '../services/temp-file';
 
 dayjs.extend(require('dayjs/plugin/utc'));
 
@@ -32,7 +34,7 @@ export class DataCrunchingHost extends RPCHost {
     rev = 7;
 
     constructor(
-        protected globalLogger: Logger,
+        protected globalLogger: GlobalLogger,
 
         protected crawler: CrawlerHost,
         protected snapshotFormatter: SnapshotFormatter,

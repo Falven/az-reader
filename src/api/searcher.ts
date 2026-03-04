@@ -114,6 +114,17 @@ export class SearcherHost extends RPCHost {
         returnType: [String, OutputServerEventStream],
     })
     @Method({
+        name: 'searchMcpCompat',
+        ext: {
+            http: {
+                action: ['post'],
+                path: '/mcp/search'
+            }
+        },
+        tags: ['search'],
+        returnType: [String, OutputServerEventStream, RawString],
+    })
+    @Method({
         ext: {
             http: {
                 action: ['get', 'post'],
@@ -158,7 +169,10 @@ export class SearcherHost extends RPCHost {
         }
 
         const uid = await auth.solveUID();
-        // Return content by default
+        const isMcpCompatRequest = ctx.path === '/mcp/search';
+        if (isMcpCompatRequest) {
+            crawlerOptions.respondWith = 'no-content';
+        }
         const crawlWithoutContent = crawlerOptions.respondWith.includes('no-content');
         const withFavicon = Boolean(ctx.get('X-With-Favicons'));
         this.threadLocal.set('collect-favicon', withFavicon);
@@ -166,6 +180,10 @@ export class SearcherHost extends RPCHost {
 
         let chargeAmount = 0;
         const noSlashPath = decodeURIComponent(ctx.path).slice(1);
+        const toMcpCompatResponse = (items: any[]) => assignTransferProtocolMeta(
+            JSON.stringify({ results: items }),
+            { contentType: 'application/json; charset=utf-8', envelope: null }
+        );
         if (!noSlashPath && !q) {
             const index = await this.crawler.getIndex(auth);
             if (!uid) {
@@ -432,7 +450,7 @@ export class SearcherHost extends RPCHost {
                     await assigningOfGeneralMixins;
                     chargeAmount = this.assignChargeAmount(lastScrapped, count, chargeAmountScaler, fallbackQuery);
 
-                    rpcReflect.return(lastScrapped);
+                    rpcReflect.return(isMcpCompatRequest ? toMcpCompatResponse(lastScrapped) : lastScrapped);
                     earlyReturn = true;
                 }, ((crawlerOptions.timeout || 0) * 1000) || this.reasonableDelayMs);
             };
@@ -454,7 +472,7 @@ export class SearcherHost extends RPCHost {
                 await assigningOfGeneralMixins;
                 chargeAmount = this.assignChargeAmount(scrapped, count, chargeAmountScaler, fallbackQuery);
 
-                return scrapped;
+                return isMcpCompatRequest ? toMcpCompatResponse(scrapped) : scrapped;
             }
 
             if (earlyReturnTimer) {
@@ -470,7 +488,7 @@ export class SearcherHost extends RPCHost {
                 chargeAmount = this.assignChargeAmount(lastScrapped, count, chargeAmountScaler, fallbackQuery);
             }
 
-            return lastScrapped;
+            return isMcpCompatRequest ? toMcpCompatResponse(lastScrapped) : lastScrapped;
         }
 
         let earlyReturnTimer: ReturnType<typeof setTimeout> | undefined;
