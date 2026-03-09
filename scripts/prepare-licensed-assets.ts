@@ -5,7 +5,6 @@ const path = require("node:path");
 const nodeCrypto = require("node:crypto");
 
 const LICENSED_DIR = path.resolve(__dirname, "..", "licensed");
-const GEOLITE_TAG = process.env.GEOLITE_GITHUB_TAG || "2026.03.01";
 const GEOLITE_FILENAMES = ["GeoLite2-ASN.mmdb", "GeoLite2-City.mmdb", "GeoLite2-Country.mmdb"];
 const SOURCE_HAN_FILENAME = "SourceHanSansSC-Regular.otf";
 const SOURCE_HAN_URL =
@@ -37,30 +36,40 @@ async function main() {
   try {
     fs.mkdirSync(LICENSED_DIR, { recursive: true });
 
-    const releaseUrl = `https://api.github.com/repos/P3TERX/GeoLite.mmdb/releases/tags/${GEOLITE_TAG}`;
-    const release = await fetchJson(releaseUrl);
-    const assets = new Map<string, GeoLiteAsset>(
-      (release.assets || []).map((asset: any): [string, GeoLiteAsset] => [
-        String(asset.name || ""),
-        {
-          url: String(asset.browser_download_url || ""),
-          digest: `${asset.digest || ""}`.replace(/^sha256:/, "").toLowerCase(),
-        },
-      ])
-    );
-
-    for (const filename of GEOLITE_FILENAMES) {
-      const asset = assets.get(filename);
-      if (!asset?.url || !asset?.digest) {
-        throw new Error(`Release ${GEOLITE_TAG} is missing ${filename} or digest metadata.`);
-      }
-
+    const pendingGeoLiteFiles = GEOLITE_FILENAMES.filter((filename) => {
       const filePath = path.join(LICENSED_DIR, filename);
       const hashPath = `${filePath}.sha256`;
-      const hasValidLocalFile =
-        fs.existsSync(filePath) && sha256(fs.readFileSync(filePath)) === asset.digest;
+      if (!fs.existsSync(filePath) || !fs.existsSync(hashPath)) {
+        return true;
+      }
 
-      if (!hasValidLocalFile) {
+      const actualHash = sha256(fs.readFileSync(filePath));
+      const expectedHash = fs.readFileSync(hashPath, "utf8").trim().toLowerCase();
+      return actualHash !== expectedHash;
+    });
+
+    if (pendingGeoLiteFiles.length > 0) {
+      const releaseUrl = "https://api.github.com/repos/P3TERX/GeoLite.mmdb/releases/latest";
+      const release = await fetchJson(releaseUrl);
+      const assets = new Map<string, GeoLiteAsset>(
+        (release.assets || []).map((asset: any): [string, GeoLiteAsset] => [
+          String(asset.name || ""),
+          {
+            url: String(asset.browser_download_url || ""),
+            digest: `${asset.digest || ""}`.replace(/^sha256:/, "").toLowerCase(),
+          },
+        ])
+      );
+
+      for (const filename of pendingGeoLiteFiles) {
+        const asset = assets.get(filename);
+        if (!asset?.url || !asset?.digest) {
+          throw new Error(`Latest GeoLite release is missing ${filename} or digest metadata.`);
+        }
+
+        const filePath = path.join(LICENSED_DIR, filename);
+        const hashPath = `${filePath}.sha256`;
+
         process.stdout.write(`Downloading ${filename}...\n`);
         const content = await fetchBuffer(asset.url);
         const digest = sha256(content);
@@ -68,19 +77,17 @@ async function main() {
           throw new Error(`Checksum mismatch for ${filename}.`);
         }
         fs.writeFileSync(filePath, content);
+        fs.writeFileSync(hashPath, `${asset.digest}\n`);
       }
-
-      fs.writeFileSync(hashPath, `${asset.digest}\n`);
     }
 
     const sourceHanPath = path.join(LICENSED_DIR, SOURCE_HAN_FILENAME);
     const sourceHanHashPath = `${sourceHanPath}.sha256`;
-    let sourceHanValid = false;
-    if (fs.existsSync(sourceHanPath) && fs.existsSync(sourceHanHashPath)) {
-      const sourceHanActualHash = sha256(fs.readFileSync(sourceHanPath));
-      const sourceHanExpectedHash = fs.readFileSync(sourceHanHashPath, "utf8").trim().toLowerCase();
-      sourceHanValid = sourceHanActualHash === sourceHanExpectedHash;
-    }
+    const sourceHanValid =
+      fs.existsSync(sourceHanPath) &&
+      fs.existsSync(sourceHanHashPath) &&
+      sha256(fs.readFileSync(sourceHanPath)) ===
+      fs.readFileSync(sourceHanHashPath, "utf8").trim().toLowerCase();
 
     if (!sourceHanValid) {
       process.stdout.write(`Downloading ${SOURCE_HAN_FILENAME}...\n`);
