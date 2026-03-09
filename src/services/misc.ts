@@ -99,7 +99,9 @@ export class MiscService extends AsyncService {
         }
 
         return {
-            url: result,
+            // URL instances are not structured-cloneable across worker threads in Node 22.
+            // Return a string and reconstruct URL on the caller side.
+            url: result.toString(),
             ips
         };
     }

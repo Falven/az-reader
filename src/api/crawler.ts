@@ -516,7 +516,8 @@ export class CrawlerHost extends RPCHost {
             });
         }
 
-        const { url: safeURL, ips } = await this.miscService.assertNormalizedUrl(url);
+        const { url: safeUrlText, ips } = await this.miscService.assertNormalizedUrl(url);
+        const safeURL = new URL(safeUrlText);
         if (this.puppeteerControl.circuitBreakerHosts.has(safeURL.hostname.toLowerCase())) {
             throw new SecurityCompromiseError({
                 message: `Circular hostname: ${safeURL.protocol}`,
